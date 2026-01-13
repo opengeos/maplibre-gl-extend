@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MapLibre GL Extend - Basic Example</title>
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.0.0/dist/maplibre-gl.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+    .controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      max-width: 280px;
+      z-index: 1000;
+    }
+    .controls h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #333;
+    }
+    .control-group {
+      margin-bottom: 12px;
+    }
+    .control-group label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #666;
+    }
+    .control-group select,
+    .control-group button {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .control-group button {
+      background: #3388ff;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .control-group button:hover {
+      background: #2266cc;
+    }
+    .layer-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 8px;
+      background: #f5f5f5;
+      border-radius: 4px;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+    .layer-item button {
+      padding: 4px 8px;
+      font-size: 11px;
+      width: auto;
+    }
+    .layer-item button.remove {
+      background: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="controls">
+    <h3>MapLibre GL Extend Demo</h3>
+
+    <div class="control-group">
+      <label>Basemap</label>
+      <select id="basemap-select">
+        <option value="">-- Select Basemap --</option>
+        <optgroup label="OpenStreetMap">
+          <option value="OpenStreetMap.Mapnik">OpenStreetMap</option>
+          <option value="OpenStreetMap.HOT">OpenStreetMap HOT</option>
+        </optgroup>
+        <optgroup label="CartoDB">
+          <option value="CartoDB.Positron">CartoDB Positron</option>
+          <option value="CartoDB.DarkMatter">CartoDB Dark Matter</option>
+          <option value="CartoDB.Voyager">CartoDB Voyager</option>
+        </optgroup>
+        <optgroup label="Esri">
+          <option value="Esri.WorldStreetMap">Esri World Street Map</option>
+          <option value="Esri.WorldImagery">Esri World Imagery</option>
+          <option value="Esri.WorldTopoMap">Esri World Topo Map</option>
+        </optgroup>
+        <optgroup label="Google">
+          <option value="Google.Streets">Google Streets</option>
+          <option value="Google.Satellite">Google Satellite</option>
+          <option value="Google.Hybrid">Google Hybrid</option>
+          <option value="Google.Terrain">Google Terrain</option>
+        </optgroup>
+        <optgroup label="Other">
+          <option value="OpenTopoMap">OpenTopoMap</option>
+          <option value="USGS.USImagery">USGS Imagery</option>
+          <option value="Stadia.StamenWatercolor">Stamen Watercolor</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label>Add Layers</label>
+      <button id="add-geojson">Add Sample GeoJSON</button>
+      <button id="add-wms">Add WMS Layer</button>
+    </div>
+
+    <div class="control-group">
+      <label>Layers</label>
+      <div id="layer-list"></div>
+    </div>
+  </div>
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>
