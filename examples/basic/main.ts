@@ -1,3 +1,5 @@
+/// <reference path="../../src/types.d.ts" />
+
 import maplibregl from 'maplibre-gl';
 import '../../src/index'; // Import to extend Map.prototype
 import 'maplibre-gl/dist/maplibre-gl.css';

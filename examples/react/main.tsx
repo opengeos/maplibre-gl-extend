@@ -1,8 +1,10 @@
+/// <reference path="../../src/types.d.ts" />
+
 import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import maplibregl, { Map } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { MapExtendProvider, useMapExtend, useBasemap } from '../../src/react';
+import { MapExtendProvider, useMapExtend } from '../../src/react';
 import type { BasemapName } from '../../src/lib/basemaps/types';
 
 // Sample GeoJSON data

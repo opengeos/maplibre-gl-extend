@@ -1,3 +1,5 @@
+/// <reference path="./types.d.ts" />
+
 import { Map } from 'maplibre-gl';
 import {
   addBasemap,
