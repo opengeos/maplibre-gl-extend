@@ -11,6 +11,7 @@ Extended functionality for MapLibre GL JS with convenient methods for basemaps, 
 - **GeoJSON Layers**: Easy-to-use methods for adding GeoJSON data with auto-detection of geometry types
 - **Raster Layers**: Support for XYZ tile layers, WMS services, and Cloud Optimized GeoTIFFs (COG)
 - **Layer Management**: Toggle visibility, adjust opacity, reorder layers, and more
+- **Map State**: Capture and restore complete map state (camera, style, terrain, sky, layers, controls)
 - **TypeScript First**: Full TypeScript support with module augmentation for type-safe Map methods
 - **React Integration**: Context provider and hooks for easy React integration
 
@@ -231,6 +232,108 @@ map.removeLayerById(layerId);
 map.fitToLayer(layerId, { padding: 50 });
 ```
 
+### Map State
+
+Capture and restore the complete map state for persistence, undo/redo, or sharing.
+
+```typescript
+// Capture current map state
+const state = map.getMapState();
+
+// Save to localStorage
+localStorage.setItem('mapState', JSON.stringify(state));
+
+// Restore state later
+const savedState = JSON.parse(localStorage.getItem('mapState'));
+await map.setMapState(savedState);
+
+// Restore with animated camera transition
+await map.setMapState(savedState, {
+  cameraAnimation: { animate: true, duration: 1000 },
+});
+
+// Partial capture (exclude certain elements)
+const partialState = map.getMapState({
+  includeCamera: true,
+  includeStyle: true,
+  includeTerrain: false,
+  includeSky: false,
+  includeControls: false,
+});
+
+// Partial restore
+await map.setMapState(savedState, {
+  restoreCamera: true,
+  restoreStyle: false, // Keep current style
+  restoreTerrain: true,
+});
+
+// Include custom metadata
+const stateWithMeta = map.getMapState({
+  metadata: { name: 'My Map View', author: 'User' },
+});
+```
+
+#### Control Tracking
+
+Track controls for state serialization:
+
+```typescript
+// Add a control with tracking (instead of map.addControl)
+const navId = map.addTrackedControl(
+  new maplibregl.NavigationControl(),
+  'top-right',
+  'NavigationControl'
+);
+
+const scaleId = map.addTrackedControl(
+  new maplibregl.ScaleControl({ unit: 'metric' }),
+  'bottom-left',
+  'ScaleControl',
+  { unit: 'metric' } // Store options for recreation
+);
+
+// Get all tracked controls
+const controls = map.getTrackedControls();
+
+// Remove a tracked control
+map.removeTrackedControl(navId);
+
+// Restore state with controls
+await map.setMapState(savedState, {
+  restoreControls: true,
+  controlFactory: (info) => {
+    // Recreate controls based on type
+    switch (info.type) {
+      case 'NavigationControl':
+        return new maplibregl.NavigationControl();
+      case 'ScaleControl':
+        return new maplibregl.ScaleControl(info.options);
+      default:
+        return null;
+    }
+  },
+});
+```
+
+#### MapState Object
+
+```typescript
+interface MapState {
+  version: number;           // State format version
+  timestamp: number;         // Capture timestamp
+  camera: CameraState;       // Center, zoom, bearing, pitch, padding
+  style: StyleSpecification; // Full MapLibre style (sources, layers, etc.)
+  terrain: TerrainSpecification | null;
+  sky: SkySpecification | null;
+  projection: ProjectionSpecification;
+  basemap: BasemapName | null;
+  customLayers: LayerInfo[]; // Layers managed by maplibre-gl-extend
+  controls?: SerializableControlInfo[];
+  metadata?: Record<string, unknown>;
+}
+```
+
 ### React Hooks
 
 ```typescript
@@ -272,6 +375,7 @@ import {
   getBasemapDefinition,
   generateLayerId,
   generateSourceId,
+  generateControlId,
   MapExtendError,
 } from 'maplibre-gl-extend';
 
@@ -284,13 +388,23 @@ import {
 
 // Types
 import type {
+  // Basemap types
   BasemapName,
   BasemapDefinition,
+  // Layer types
   AddGeojsonOptions,
   AddRasterOptions,
   AddCogOptions,
   AddWmsOptions,
   LayerInfo,
+  // State types
+  MapState,
+  CameraState,
+  GetMapStateOptions,
+  SetMapStateOptions,
+  ControlInfo,
+  SerializableControlInfo,
+  ControlPosition,
 } from 'maplibre-gl-extend';
 ```
 

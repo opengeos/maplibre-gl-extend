@@ -9,6 +9,11 @@ let layerCounter = 0;
 let sourceCounter = 0;
 
 /**
+ * Counter for generating unique control IDs
+ */
+let controlCounter = 0;
+
+/**
  * Generate a unique layer ID.
  *
  * @param prefix - Prefix for the layer ID
@@ -29,9 +34,20 @@ export function generateSourceId(prefix: string = 'source'): string {
 }
 
 /**
+ * Generate a unique control ID.
+ *
+ * @param prefix - Prefix for the control ID
+ * @returns Unique control ID
+ */
+export function generateControlId(prefix: string = 'control'): string {
+  return `mgl-extend-${prefix}-${++controlCounter}-${Date.now().toString(36)}`;
+}
+
+/**
  * Reset counters (useful for testing).
  */
 export function resetCounters(): void {
   layerCounter = 0;
   sourceCounter = 0;
+  controlCounter = 0;
 }
