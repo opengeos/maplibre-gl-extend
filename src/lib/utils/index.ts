@@ -1,6 +1,7 @@
 export {
   generateLayerId,
   generateSourceId,
+  generateControlId,
   resetCounters,
 } from './id-generator';
 

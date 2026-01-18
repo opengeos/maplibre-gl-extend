@@ -24,6 +24,13 @@ import {
   sendLayerToBack,
   fitToLayer,
 } from './lib/layers';
+import {
+  getMapState,
+  setMapState,
+  storeControlInfo,
+  removeControlInfo,
+  getAllTrackedControls,
+} from './lib/state';
 
 // Note: Module augmentation for Map is in types.d.ts
 
@@ -99,6 +106,28 @@ function extendMapPrototype(): void {
   Map.prototype.fitToLayer = function (layerId, options) {
     return fitToLayer(this, layerId, options);
   };
+
+  // State management methods
+  Map.prototype.getMapState = function (options) {
+    return getMapState(this, options);
+  };
+
+  Map.prototype.setMapState = function (state, options) {
+    return setMapState(this, state, options);
+  };
+
+  Map.prototype.addTrackedControl = function (control, position, type, options) {
+    return storeControlInfo(this, control, position, type, options);
+  };
+
+  Map.prototype.removeTrackedControl = function (controlId) {
+    removeControlInfo(this, controlId);
+    return this;
+  };
+
+  Map.prototype.getTrackedControls = function () {
+    return getAllTrackedControls(this);
+  };
 }
 
 // Extend Map.prototype when module is imported
@@ -127,7 +156,19 @@ export type {
 export {
   generateLayerId,
   generateSourceId,
+  generateControlId,
   MapExtendError,
   validateUrl,
   validateBasemapName,
 } from './lib/utils';
+
+// Export state types
+export type {
+  CameraState,
+  ControlPosition,
+  ControlInfo,
+  SerializableControlInfo,
+  MapState,
+  GetMapStateOptions,
+  SetMapStateOptions,
+} from './lib/state';

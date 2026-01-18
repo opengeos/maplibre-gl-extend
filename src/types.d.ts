@@ -1,5 +1,5 @@
 import type { GeoJSON } from 'geojson';
-import type { FitBoundsOptions } from 'maplibre-gl';
+import type { FitBoundsOptions, IControl } from 'maplibre-gl';
 import type { BasemapName } from './lib/basemaps/types';
 import type {
   AddGeojsonOptions,
@@ -9,6 +9,13 @@ import type {
   AddVectorOptions,
   LayerInfo,
 } from './lib/layers/types';
+import type {
+  MapState,
+  GetMapStateOptions,
+  SetMapStateOptions,
+  ControlInfo,
+  ControlPosition,
+} from './lib/state/types';
 
 declare module 'maplibre-gl' {
   interface Map {
@@ -145,5 +152,55 @@ declare module 'maplibre-gl' {
      * @returns The map instance for chaining
      */
     fitToLayer(layerId: string, options?: FitBoundsOptions): this;
+
+    // State management methods
+
+    /**
+     * Capture the complete map state for serialization.
+     *
+     * @param options - Options for what to include in state
+     * @returns Complete map state object
+     */
+    getMapState(options?: GetMapStateOptions): MapState;
+
+    /**
+     * Restore map state from a saved state object.
+     *
+     * @param state - Saved map state
+     * @param options - Options for what to restore
+     * @returns Promise that resolves when restoration is complete
+     */
+    setMapState(state: MapState, options?: SetMapStateOptions): Promise<void>;
+
+    /**
+     * Add a control to the map and track it for state serialization.
+     *
+     * @param control - Control instance to add
+     * @param position - Position on the map (default: 'top-right')
+     * @param type - Control type name for serialization (e.g., 'NavigationControl')
+     * @param options - Options used to create the control (for serialization)
+     * @returns Generated control ID
+     */
+    addTrackedControl(
+      control: IControl,
+      position?: ControlPosition,
+      type?: string,
+      options?: Record<string, unknown>
+    ): string;
+
+    /**
+     * Remove a tracked control from the map.
+     *
+     * @param controlId - Control ID to remove
+     * @returns The map instance for chaining
+     */
+    removeTrackedControl(controlId: string): this;
+
+    /**
+     * Get all tracked controls.
+     *
+     * @returns Array of control info (with instance references)
+     */
+    getTrackedControls(): ControlInfo[];
   }
 }
