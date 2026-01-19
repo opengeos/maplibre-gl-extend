@@ -4,6 +4,8 @@ Extended functionality for MapLibre GL JS with convenient methods for basemaps, 
 
 [![npm version](https://badge.fury.io/js/maplibre-gl-extend.svg)](https://www.npmjs.com/package/maplibre-gl-extend)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Open in CodeSandbox](https://img.shields.io/badge/Open%20in-CodeSandbox-blue?logo=codesandbox)](https://codesandbox.io/p/github/opengeos/maplibre-gl-extend)
+[![Open in StackBlitz](https://img.shields.io/badge/Open%20in-StackBlitz-blue?logo=stackblitz)](https://stackblitz.com/github/opengeos/maplibre-gl-extend)
 
 ## Features
 
