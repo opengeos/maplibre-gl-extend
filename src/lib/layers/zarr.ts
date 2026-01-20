@@ -395,3 +395,19 @@ export function getZarrLayerEntry(map: Map, layerId: string): ZarrLayerEntry | u
   const zarrLayers = getZarrLayers(map);
   return zarrLayers[layerId];
 }
+
+/**
+ * Get the Zarr layers Map for use with ZarrLayerAdapter.
+ * Returns a JavaScript Map of layer ID to ZarrLayer instance.
+ *
+ * @param map - MapLibre map instance
+ * @returns Map of Zarr layers
+ */
+export function getZarrLayersMap(map: Map): globalThis.Map<string, ZarrLayerInstance> {
+  const zarrLayers = getZarrLayers(map);
+  const layersMap = new globalThis.Map<string, ZarrLayerInstance>();
+  for (const [id, entry] of Object.entries(zarrLayers)) {
+    layersMap.set(id, entry.layer);
+  }
+  return layersMap;
+}

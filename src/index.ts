@@ -206,3 +206,6 @@ export type {
   GetMapStateOptions,
   SetMapStateOptions,
 } from './lib/state';
+
+// Export layer control adapters
+export { COGLayerAdapter, ZarrLayerAdapter } from './lib/layers';

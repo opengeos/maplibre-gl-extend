@@ -40,6 +40,7 @@ export {
   setZarrLayerOpacity,
   removeZarrLayer,
   isZarrLayer,
+  getZarrLayersMap,
 } from './zarr';
 
 // Deck.gl overlay exports
@@ -47,3 +48,7 @@ export {
   isDeckLayer,
   getDeckLayerEntry,
 } from './deck-overlay';
+
+// Layer control adapters
+export { COGLayerAdapter } from './cog-layer-adapter';
+export { ZarrLayerAdapter } from './zarr-layer-adapter';

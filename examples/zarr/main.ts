@@ -2,9 +2,16 @@
 
 import maplibregl from 'maplibre-gl';
 import '../../src/index'; // Import to extend Map.prototype
+import { ZarrLayerAdapter, getZarrLayersMap } from '../../src/lib/layers';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { LayerControl } from 'maplibre-gl-layer-control';
 import 'maplibre-gl-layer-control/style.css';
+import type { ZarrLayer } from '@carbonplan/zarr-layer';
+
+// Zarr Layer Adapter for layer control integration
+let zarrAdapter: ZarrLayerAdapter;
+// Local map to track Zarr layers for the adapter
+const zarrLayersMap = new Map<string, ZarrLayer>();
 
 // Colormap definitions
 const colormaps: Record<string, string[]> = {
@@ -109,6 +116,13 @@ function updateLayerList(): void {
   layerList.querySelectorAll('.remove').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const layerId = (e.target as HTMLButtonElement).dataset.layer!;
+
+      // Notify adapter before removal
+      if (zarrAdapter) {
+        zarrAdapter.notifyLayerRemoved(layerId);
+      }
+      zarrLayersMap.delete(layerId);
+
       map.removeZarrLayer(layerId);
       if (layerId === currentZarrLayerId) {
         currentZarrLayerId = null;
@@ -205,6 +219,17 @@ addZarrBtn.addEventListener('click', async () => {
     currentZarrLayerId = layerId;
     enableControls();
     updateColormapPreview(colormaps[colormapSelect.value]);
+
+    // Sync local map and notify adapter
+    const layersMapFromLib = getZarrLayersMap(map);
+    const layerInstance = layersMapFromLib.get(layerId);
+    if (layerInstance) {
+      zarrLayersMap.set(layerId, layerInstance);
+      if (zarrAdapter) {
+        zarrAdapter.notifyLayerAdded(layerId);
+      }
+    }
+
     updateLayerList();
     setStatus(`Zarr layer loaded: ${layerId}`, 'success');
     console.log('Zarr layer added:', layerId);
@@ -221,12 +246,16 @@ map.on('load', () => {
   // Set initial basemap
   map.setBasemap('CartoDB.DarkMatter');
 
-  // Add layer control
+  // Create Zarr layer adapter for layer control integration
+  zarrAdapter = new ZarrLayerAdapter(map, zarrLayersMap);
+
+  // Add layer control with Zarr adapter
   const layerControl = new LayerControl({
     collapsed: true,
     panelWidth: 360,
+    customLayerAdapters: [zarrAdapter],
   });
-  map.addControl(layerControl as unknown as maplibregl.IControl, 'top-left');
+  map.addControl(layerControl as unknown as maplibregl.IControl, 'top-right');
 
   // Initialize colormap preview
   updateColormapPreview(colormaps.rdbu);

@@ -2,9 +2,13 @@
 
 import maplibregl from 'maplibre-gl';
 import '../../src/index'; // Import to extend Map.prototype
+import { COGLayerAdapter } from '../../src/lib/layers';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { LayerControl } from 'maplibre-gl-layer-control';
 import 'maplibre-gl-layer-control/style.css';
+
+// COG Layer Adapter for layer control integration
+let cogAdapter: COGLayerAdapter;
 
 // Create map
 const map = new maplibregl.Map({
@@ -81,6 +85,12 @@ function updateLayerList(): void {
   layerList.querySelectorAll('.remove').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const layerId = (e.target as HTMLButtonElement).dataset.layer!;
+
+      // Notify adapter before removal
+      if (cogAdapter) {
+        cogAdapter.notifyLayerRemoved(layerId);
+      }
+
       map.removeLayerById(layerId);
       if (layerId === currentCogLayerId) {
         currentCogLayerId = null;
@@ -124,6 +134,12 @@ addCogBtn.addEventListener('click', async () => {
 
     currentCogLayerId = layerId;
     opacitySlider.disabled = false;
+
+    // Notify the COG adapter that a layer was added
+    if (cogAdapter) {
+      cogAdapter.notifyLayerAdded(layerId);
+    }
+
     updateLayerList();
     setStatus(`COG layer loaded: ${layerId}`, 'success');
     console.log('GPU COG layer added:', layerId);
@@ -140,12 +156,16 @@ map.on('load', () => {
   // Set initial basemap
   map.setBasemap('CartoDB.Positron');
 
-  // Add layer control
+  // Create COG layer adapter for layer control integration
+  cogAdapter = new COGLayerAdapter(map);
+
+  // Add layer control with COG adapter
   const layerControl = new LayerControl({
     collapsed: true,
     panelWidth: 360,
+    customLayerAdapters: [cogAdapter],
   });
-  map.addControl(layerControl as unknown as maplibregl.IControl, 'top-left');
+  map.addControl(layerControl as unknown as maplibregl.IControl, 'top-right');
 
   updateLayerList();
   setStatus('Ready to load COG layer');
