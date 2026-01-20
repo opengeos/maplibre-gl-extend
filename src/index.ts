@@ -40,11 +40,25 @@ import {
 
 // Note: Module augmentation for Map is in types.d.ts
 
+// Track if prototype has been extended to avoid duplicate extensions
+let prototypeExtended = false;
+
 /**
  * Extend the MapLibre GL Map prototype with convenience methods.
- * This function is called automatically when the module is imported.
+ * This function is called automatically when the module is imported,
+ * but can also be called explicitly to ensure reliable prototype extension
+ * in production builds where tree-shaking might occur.
+ * 
+ * It's safe to call this function multiple times - it will only extend
+ * the prototype once.
+ * 
+ * @returns true if the prototype was extended, false if already extended
  */
-function extendMapPrototype(): void {
+export function extendMapPrototype(): boolean {
+  if (prototypeExtended) {
+    return false;
+  }
+  prototypeExtended = true;
   // Basemap methods
   Map.prototype.addBasemap = function (name) {
     return addBasemap(this, name);
@@ -160,6 +174,8 @@ function extendMapPrototype(): void {
   Map.prototype.removeZarrLayer = function (layerId) {
     return removeZarrLayer(this, layerId);
   };
+
+  return true;
 }
 
 // Extend Map.prototype when module is imported
