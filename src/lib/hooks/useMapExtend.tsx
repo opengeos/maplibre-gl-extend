@@ -9,7 +9,15 @@ import {
 import type { Map } from 'maplibre-gl';
 import type { GeoJSON } from 'geojson';
 import type { BasemapName } from '../basemaps/types';
-import type { LayerInfo, AddGeojsonOptions, AddCogOptions, AddWmsOptions, AddRasterOptions } from '../layers/types';
+import type {
+  LayerInfo,
+  AddGeojsonOptions,
+  AddCogOptions,
+  AddWmsOptions,
+  AddRasterOptions,
+  AddGpuCogOptions,
+  AddZarrOptions,
+} from '../layers/types';
 
 /**
  * Context value for MapExtend provider.
@@ -31,6 +39,16 @@ interface MapExtendContextValue {
   addCogLayer: (url: string, options?: AddCogOptions) => string | null;
   /** Add a WMS layer */
   addWmsLayer: (url: string, options: AddWmsOptions) => string | null;
+  /** Add a GPU-accelerated COG layer */
+  addGpuCogLayer: (url: string, options?: AddGpuCogOptions) => Promise<string | null>;
+  /** Add a Zarr layer */
+  addZarrLayer: (url: string, options: AddZarrOptions) => Promise<string | null>;
+  /** Update Zarr layer selector */
+  setZarrSelector: (layerId: string, selector: Record<string, number>) => void;
+  /** Update Zarr layer color limits */
+  setZarrClim: (layerId: string, clim: [number, number]) => void;
+  /** Update Zarr layer colormap */
+  setZarrColormap: (layerId: string, colormap: string[]) => void;
   /** Remove a layer */
   removeLayer: (layerId: string) => void;
   /** Toggle layer visibility */
@@ -152,6 +170,58 @@ export function MapExtendProvider({ map, children }: MapExtendProviderProps) {
     [map, refreshLayers]
   );
 
+  const addGpuCogLayerFn = useCallback(
+    async (url: string, options?: AddGpuCogOptions): Promise<string | null> => {
+      if (!map) return null;
+
+      const layerId = await map.addGpuCogLayer(url, options);
+      refreshLayers();
+      return layerId;
+    },
+    [map, refreshLayers]
+  );
+
+  const addZarrLayerFn = useCallback(
+    async (url: string, options: AddZarrOptions): Promise<string | null> => {
+      if (!map) return null;
+
+      const layerId = await map.addZarrLayer(url, options);
+      refreshLayers();
+      return layerId;
+    },
+    [map, refreshLayers]
+  );
+
+  const setZarrSelectorFn = useCallback(
+    (layerId: string, selector: Record<string, number>) => {
+      if (map) {
+        map.setZarrSelector(layerId, selector);
+        refreshLayers();
+      }
+    },
+    [map, refreshLayers]
+  );
+
+  const setZarrClimFn = useCallback(
+    (layerId: string, clim: [number, number]) => {
+      if (map) {
+        map.setZarrClim(layerId, clim);
+        refreshLayers();
+      }
+    },
+    [map, refreshLayers]
+  );
+
+  const setZarrColormapFn = useCallback(
+    (layerId: string, colormap: string[]) => {
+      if (map) {
+        map.setZarrColormap(layerId, colormap);
+        refreshLayers();
+      }
+    },
+    [map, refreshLayers]
+  );
+
   const removeLayer = useCallback(
     (layerId: string) => {
       if (map) {
@@ -196,6 +266,11 @@ export function MapExtendProvider({ map, children }: MapExtendProviderProps) {
         addRasterLayer,
         addCogLayer,
         addWmsLayer,
+        addGpuCogLayer: addGpuCogLayerFn,
+        addZarrLayer: addZarrLayerFn,
+        setZarrSelector: setZarrSelectorFn,
+        setZarrClim: setZarrClimFn,
+        setZarrColormap: setZarrColormapFn,
         removeLayer,
         toggleLayerVisibility,
         setLayerOpacity: setLayerOpacityFn,

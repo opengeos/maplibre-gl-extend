@@ -4,6 +4,8 @@ export type {
   AddCogOptions,
   AddWmsOptions,
   AddVectorOptions,
+  AddGpuCogOptions,
+  AddZarrOptions,
   LayerInfo,
 } from './types';
 
@@ -19,3 +21,29 @@ export {
   sendLayerToBack,
   fitToLayer,
 } from './management';
+
+// GPU COG layer exports
+export {
+  addGpuCogLayer,
+  setGpuCogLayerVisibility,
+  setGpuCogLayerOpacity,
+  removeGpuCogLayer,
+} from './gpu-cog';
+
+// Zarr layer exports
+export {
+  addZarrLayer,
+  setZarrSelector,
+  setZarrClim,
+  setZarrColormap,
+  setZarrLayerVisibility,
+  setZarrLayerOpacity,
+  removeZarrLayer,
+  isZarrLayer,
+} from './zarr';
+
+// Deck.gl overlay exports
+export {
+  isDeckLayer,
+  getDeckLayerEntry,
+} from './deck-overlay';

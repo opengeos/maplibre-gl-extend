@@ -92,6 +92,10 @@
     .tag.typescript { background: #e3f2fd; color: #1565c0; }
     .tag.basemap { background: #e8f5e9; color: #2e7d32; }
     .tag.geojson { background: #fce4ec; color: #c2185b; }
+    .tag.cog { background: #f3e5f5; color: #7b1fa2; }
+    .tag.zarr { background: #e8eaf6; color: #3949ab; }
+    .tag.deckgl { background: #ede7f6; color: #512da8; }
+    .tag.climate { background: #e0f7fa; color: #00838f; }
 
     .footer {
       text-align: center;
@@ -133,6 +137,26 @@
           <span class="tag react">React</span>
           <span class="tag typescript">TypeScript</span>
           <span class="tag geojson">GeoJSON</span>
+        </div>
+      </a>
+
+      <a href="./examples/cog/index.html" class="example-card">
+        <h2>GPU COG Layer</h2>
+        <p>GPU-accelerated Cloud Optimized GeoTIFF (COG) rendering using deck.gl for large raster datasets.</p>
+        <div class="tags">
+          <span class="tag vanilla">Vanilla JS</span>
+          <span class="tag cog">COG</span>
+          <span class="tag deckgl">deck.gl</span>
+        </div>
+      </a>
+
+      <a href="./examples/zarr/index.html" class="example-card">
+        <h2>Zarr Layer</h2>
+        <p>Multi-dimensional array data visualization for climate data and satellite imagery time series.</p>
+        <div class="tags">
+          <span class="tag vanilla">Vanilla JS</span>
+          <span class="tag zarr">Zarr</span>
+          <span class="tag climate">Climate</span>
         </div>
       </a>
     </div>

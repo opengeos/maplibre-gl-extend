@@ -23,6 +23,12 @@ import {
   bringLayerToFront,
   sendLayerToBack,
   fitToLayer,
+  addGpuCogLayer,
+  addZarrLayer,
+  setZarrSelector,
+  setZarrClim,
+  setZarrColormap,
+  removeZarrLayer,
 } from './lib/layers';
 import {
   getMapState,
@@ -128,6 +134,32 @@ function extendMapPrototype(): void {
   Map.prototype.getTrackedControls = function () {
     return getAllTrackedControls(this);
   };
+
+  // GPU COG layer methods
+  Map.prototype.addGpuCogLayer = function (url, options) {
+    return addGpuCogLayer(this, url, options);
+  };
+
+  // Zarr layer methods
+  Map.prototype.addZarrLayer = function (url, options) {
+    return addZarrLayer(this, url, options);
+  };
+
+  Map.prototype.setZarrSelector = function (layerId, selector) {
+    return setZarrSelector(this, layerId, selector);
+  };
+
+  Map.prototype.setZarrClim = function (layerId, clim) {
+    return setZarrClim(this, layerId, clim);
+  };
+
+  Map.prototype.setZarrColormap = function (layerId, colormap) {
+    return setZarrColormap(this, layerId, colormap);
+  };
+
+  Map.prototype.removeZarrLayer = function (layerId) {
+    return removeZarrLayer(this, layerId);
+  };
 }
 
 // Extend Map.prototype when module is imported
@@ -149,6 +181,8 @@ export type {
   AddCogOptions,
   AddWmsOptions,
   AddVectorOptions,
+  AddGpuCogOptions,
+  AddZarrOptions,
   LayerInfo,
 } from './lib/layers/types';
 

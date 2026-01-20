@@ -12,6 +12,8 @@ Extended functionality for MapLibre GL JS with convenient methods for basemaps, 
 - **Basemap Support**: 35+ free basemap providers including OpenStreetMap, CartoDB, Esri, Google, Stadia, USGS, and more
 - **GeoJSON Layers**: Easy-to-use methods for adding GeoJSON data with auto-detection of geometry types
 - **Raster Layers**: Support for XYZ tile layers, WMS services, and Cloud Optimized GeoTIFFs (COG)
+- **GPU COG Layers**: GPU-accelerated Cloud Optimized GeoTIFF rendering using deck.gl for large rasters
+- **Zarr Layers**: Multi-dimensional array data visualization (climate data, satellite imagery time series)
 - **Layer Management**: Toggle visibility, adjust opacity, reorder layers, and more
 - **Map State**: Capture and restore complete map state (camera, style, terrain, sky, layers, controls)
 - **TypeScript First**: Full TypeScript support with module augmentation for type-safe Map methods
@@ -198,12 +200,69 @@ map.addWmsLayer('https://example.com/wms', {
   opacity: 0.7,
 });
 
-// Add Cloud Optimized GeoTIFF
+// Add Cloud Optimized GeoTIFF (tile-based)
 map.addCogLayer('https://example.com/raster.tif', {
   tileServerUrl: 'https://titiler.example.com', // TiTiler server URL
   opacity: 0.9,
   bounds: [-180, -90, 180, 90],
 });
+```
+
+### GPU COG Layers
+
+For large Cloud Optimized GeoTIFFs, use GPU-accelerated rendering with deck.gl:
+
+```typescript
+// Add GPU-accelerated COG layer
+const layerId = await map.addGpuCogLayer('https://example.com/large-raster.tif', {
+  opacity: 0.8,
+  fitBounds: true,      // Automatically zoom to raster extent
+  debug: false,         // Show debug tiles
+  debugOpacity: 0.25,   // Debug tile opacity
+  maxError: 0.125,      // Maximum terrain mesh error
+});
+
+// Control visibility and opacity
+map.setLayerVisibility(layerId, false);
+map.setLayerOpacity(layerId, 0.5);
+
+// Remove the layer
+map.removeLayerById(layerId);
+```
+
+### Zarr Layers
+
+Visualize multi-dimensional array data (e.g., climate data, satellite time series):
+
+```typescript
+// Add Zarr layer
+const layerId = await map.addZarrLayer(
+  'https://carbonplan-maps.s3.us-west-2.amazonaws.com/v2/demo/4d/tavg-prec-month',
+  {
+    variable: 'tavg',                    // Variable to display
+    colormap: ['#440154', '#21918c', '#fde725'], // Viridis-like colormap
+    clim: [0, 30],                       // Color limits [min, max]
+    opacity: 0.8,
+    selector: { month: 6 },              // Dimension selector
+    fillValue: -9999,                    // No-data value
+  }
+);
+
+// Update dimension selector (e.g., change month)
+map.setZarrSelector(layerId, { month: 9 }); // October
+
+// Update color limits
+map.setZarrClim(layerId, [-10, 40]);
+
+// Update colormap
+map.setZarrColormap(layerId, ['#3b4cc0', '#f7f7f7', '#b40426']); // Coolwarm
+
+// Control visibility and opacity
+map.setLayerVisibility(layerId, false);
+map.setLayerOpacity(layerId, 0.5);
+
+// Remove the layer
+map.removeZarrLayer(layerId);
 ```
 
 ### Layer Management
@@ -351,6 +410,11 @@ const {
   addRasterLayer,
   addCogLayer,
   addWmsLayer,
+  addGpuCogLayer,    // GPU-accelerated COG layers
+  addZarrLayer,      // Zarr multi-dimensional data
+  setZarrSelector,   // Update Zarr dimension selector
+  setZarrClim,       // Update Zarr color limits
+  setZarrColormap,   // Update Zarr colormap
   removeLayer,
   toggleLayerVisibility,
   setLayerOpacity,
@@ -398,6 +462,8 @@ import type {
   AddRasterOptions,
   AddCogOptions,
   AddWmsOptions,
+  AddGpuCogOptions,
+  AddZarrOptions,
   LayerInfo,
   // State types
   MapState,
