@@ -48,10 +48,10 @@ let prototypeExtended = false;
  * This function is called automatically when the module is imported,
  * but can also be called explicitly to ensure reliable prototype extension
  * in production builds where tree-shaking might occur.
- * 
+ *
  * It's safe to call this function multiple times - it will only extend
  * the prototype once.
- * 
+ *
  * @returns true if the prototype was extended, false if already extended
  */
 export function extendMapPrototype(): boolean {
