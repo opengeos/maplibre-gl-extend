@@ -13,7 +13,7 @@ import {
   addGeojson,
   addVector,
   addRaster,
-  addCogLayer,
+  addTileCogLayer,
   addWmsLayer,
   removeLayerById,
   getLayerInfo,
@@ -23,6 +23,12 @@ import {
   bringLayerToFront,
   sendLayerToBack,
   fitToLayer,
+  addCogLayer,
+  addZarrLayer,
+  setZarrSelector,
+  setZarrClim,
+  setZarrColormap,
+  removeZarrLayer,
 } from './lib/layers';
 import {
   getMapState,
@@ -66,8 +72,8 @@ function extendMapPrototype(): void {
     return addRaster(this, url, options);
   };
 
-  Map.prototype.addCogLayer = function (url, options) {
-    return addCogLayer(this, url, options);
+  Map.prototype.addTileCogLayer = function (url, options) {
+    return addTileCogLayer(this, url, options);
   };
 
   Map.prototype.addWmsLayer = function (baseUrl, options) {
@@ -128,6 +134,32 @@ function extendMapPrototype(): void {
   Map.prototype.getTrackedControls = function () {
     return getAllTrackedControls(this);
   };
+
+  // COG layer methods
+  Map.prototype.addCogLayer = function (url, options) {
+    return addCogLayer(this, url, options);
+  };
+
+  // Zarr layer methods
+  Map.prototype.addZarrLayer = function (url, options) {
+    return addZarrLayer(this, url, options);
+  };
+
+  Map.prototype.setZarrSelector = function (layerId, selector) {
+    return setZarrSelector(this, layerId, selector);
+  };
+
+  Map.prototype.setZarrClim = function (layerId, clim) {
+    return setZarrClim(this, layerId, clim);
+  };
+
+  Map.prototype.setZarrColormap = function (layerId, colormap) {
+    return setZarrColormap(this, layerId, colormap);
+  };
+
+  Map.prototype.removeZarrLayer = function (layerId) {
+    return removeZarrLayer(this, layerId);
+  };
 }
 
 // Extend Map.prototype when module is imported
@@ -149,6 +181,8 @@ export type {
   AddCogOptions,
   AddWmsOptions,
   AddVectorOptions,
+  AddCogLayerOptions,
+  AddZarrOptions,
   LayerInfo,
 } from './lib/layers/types';
 
@@ -172,3 +206,6 @@ export type {
   GetMapStateOptions,
   SetMapStateOptions,
 } from './lib/state';
+
+// Export layer control adapters
+export { COGLayerAdapter, ZarrLayerAdapter } from './lib/layers';

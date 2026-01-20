@@ -8,6 +8,8 @@ import {
   getLayerInfoById,
 } from './registry';
 import { clamp } from '../utils';
+import { isDeckLayer, removeDeckLayer, setDeckLayerVisibility, setDeckLayerOpacity } from './deck-overlay';
+import { isZarrLayer, removeZarrLayer, setZarrLayerVisibility, setZarrLayerOpacity } from './zarr';
 
 /**
  * Remove a layer and its source by layer ID.
@@ -17,6 +19,18 @@ import { clamp } from '../utils';
  * @returns The map instance for chaining
  */
 export function removeLayerById(map: Map, layerId: string): Map {
+  // Check if it's a deck.gl layer
+  if (isDeckLayer(map, layerId)) {
+    removeDeckLayer(map, layerId);
+    removeLayerInfo(map, layerId);
+    return map;
+  }
+
+  // Check if it's a Zarr layer
+  if (isZarrLayer(map, layerId)) {
+    return removeZarrLayer(map, layerId);
+  }
+
   const layerInfo = getLayerInfoById(map, layerId);
 
   // Remove the layer
@@ -77,6 +91,19 @@ export function setLayerVisibility(
   layerId: string,
   visible: boolean
 ): Map {
+  // Check if it's a deck.gl layer
+  if (isDeckLayer(map, layerId)) {
+    setDeckLayerVisibility(map, layerId, visible);
+    updateLayerVisibility(map, layerId, visible);
+    return map;
+  }
+
+  // Check if it's a Zarr layer
+  if (isZarrLayer(map, layerId)) {
+    setZarrLayerVisibility(map, layerId, visible);
+    return map;
+  }
+
   if (map.getLayer(layerId)) {
     map.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
     updateLayerVisibility(map, layerId, visible);
@@ -98,6 +125,20 @@ export function setLayerOpacity(
   opacity: number
 ): Map {
   const clampedOpacity = clamp(opacity, 0, 1);
+
+  // Check if it's a deck.gl layer
+  if (isDeckLayer(map, layerId)) {
+    setDeckLayerOpacity(map, layerId, clampedOpacity);
+    updateLayerOpacity(map, layerId, clampedOpacity);
+    return map;
+  }
+
+  // Check if it's a Zarr layer
+  if (isZarrLayer(map, layerId)) {
+    setZarrLayerOpacity(map, layerId, clampedOpacity);
+    return map;
+  }
+
   const layer = map.getLayer(layerId);
 
   if (layer) {

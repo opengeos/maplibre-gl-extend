@@ -7,6 +7,8 @@ import type {
   AddCogOptions,
   AddWmsOptions,
   AddVectorOptions,
+  AddCogLayerOptions,
+  AddZarrOptions,
   LayerInfo,
 } from './lib/layers/types';
 import type {
@@ -70,13 +72,14 @@ declare module 'maplibre-gl' {
     addRaster(url: string, options?: AddRasterOptions): string;
 
     /**
-     * Add a Cloud Optimized GeoTIFF (COG) layer to the map.
+     * Add a Cloud Optimized GeoTIFF (COG) layer using tile-based rendering.
+     * For GPU-accelerated rendering, use addCogLayer() instead.
      *
      * @param url - URL to the COG file
      * @param options - Layer options
      * @returns The layer ID
      */
-    addCogLayer(url: string, options?: AddCogOptions): string;
+    addTileCogLayer(url: string, options?: AddCogOptions): string;
 
     /**
      * Add a WMS layer to the map.
@@ -202,5 +205,65 @@ declare module 'maplibre-gl' {
      * @returns Array of control info (with instance references)
      */
     getTrackedControls(): ControlInfo[];
+
+    // COG Layer methods
+
+    /**
+     * Add a GPU-accelerated Cloud Optimized GeoTIFF (COG) layer using deck.gl.
+     * This provides better performance for large COG files compared to tile-based approaches.
+     *
+     * @param url - URL to the COG file
+     * @param options - Layer options
+     * @returns Promise resolving to the layer ID
+     */
+    addCogLayer(url: string, options?: AddCogLayerOptions): Promise<string>;
+
+    // Zarr Layer methods
+
+    /**
+     * Add a Zarr layer to the map.
+     * Zarr layers are used for displaying multi-dimensional array data (e.g., climate data).
+     *
+     * @param url - URL to the Zarr data source
+     * @param options - Zarr layer options (variable is required)
+     * @returns Promise resolving to the layer ID
+     */
+    addZarrLayer(url: string, options: AddZarrOptions): Promise<string>;
+
+    /**
+     * Update the dimension selector for a Zarr layer.
+     * Used to change which slice of multi-dimensional data is displayed.
+     *
+     * @param layerId - Layer ID
+     * @param selector - New selector values (e.g., { month: 6 })
+     * @returns The map instance for chaining
+     */
+    setZarrSelector(layerId: string, selector: Record<string, number>): this;
+
+    /**
+     * Update the color limits for a Zarr layer.
+     *
+     * @param layerId - Layer ID
+     * @param clim - New color limits [min, max]
+     * @returns The map instance for chaining
+     */
+    setZarrClim(layerId: string, clim: [number, number]): this;
+
+    /**
+     * Update the colormap for a Zarr layer.
+     *
+     * @param layerId - Layer ID
+     * @param colormap - New colormap (array of color strings)
+     * @returns The map instance for chaining
+     */
+    setZarrColormap(layerId: string, colormap: string[]): this;
+
+    /**
+     * Remove a Zarr layer from the map.
+     *
+     * @param layerId - Layer ID to remove
+     * @returns The map instance for chaining
+     */
+    removeZarrLayer(layerId: string): this;
   }
 }

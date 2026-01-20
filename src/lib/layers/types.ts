@@ -153,3 +153,59 @@ export interface LayerInfo {
   /** Original options used to create the layer */
   options: Record<string, unknown>;
 }
+
+/**
+ * Options for adding GPU-accelerated COG layers.
+ */
+export interface AddCogLayerOptions {
+  /** Custom layer ID (auto-generated if not provided) */
+  layerId?: string;
+  /** Display name for the layer (auto-generated from URL if not provided) */
+  name?: string;
+  /** Layer opacity (0-1, default: 1) */
+  opacity?: number;
+  /** Whether layer should be visible (default: true) */
+  visible?: boolean;
+  /** Enable debug mode (default: false) */
+  debug?: boolean;
+  /** Debug layer opacity (default: 0.25) */
+  debugOpacity?: number;
+  /** Maximum error for terrain mesh (default: 0.125) */
+  maxError?: number;
+  /** Whether to fit bounds to the COG extent (default: false) */
+  fitBounds?: boolean;
+  /** Insert layer before this layer ID */
+  beforeId?: string;
+}
+
+/**
+ * Options for adding Zarr layers.
+ */
+export interface AddZarrOptions {
+  /** Custom layer ID (auto-generated if not provided) */
+  layerId?: string;
+  /** Display name for the layer (auto-generated from URL/variable if not provided) */
+  name?: string;
+  /** Variable name to display from the Zarr dataset */
+  variable: string;
+  /** Colormap as array of color strings (default: viridis-like) */
+  colormap?: string[];
+  /** Color limits [min, max] (default: [0, 1]) */
+  clim?: [number, number];
+  /** Layer opacity (0-1, default: 1) */
+  opacity?: number;
+  /** Dimension selector for multi-dimensional data (e.g., { month: 6 }) */
+  selector?: Record<string, number>;
+  /** Minimum zoom level (default: 0) */
+  minzoom?: number;
+  /** Maximum zoom level (default: 22) */
+  maxzoom?: number;
+  /** Fill/no-data value (default: -9999) */
+  fillValue?: number;
+  /** Names of spatial dimensions (default: { lat: 'lat', lon: 'lon' }) */
+  spatialDimensions?: { lat?: string; lon?: string };
+  /** Zarr format version (default: 2) */
+  zarrVersion?: 2 | 3;
+  /** Bounds [west, south, east, north] */
+  bounds?: [number, number, number, number];
+}

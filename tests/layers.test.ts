@@ -72,11 +72,11 @@ describe('layer management', () => {
     });
   });
 
-  describe('addCogLayer', () => {
-    it('should add COG layer with TiTiler URL', async () => {
-      const { addCogLayer } = await import('../src/lib/layers/raster');
+  describe('addTileCogLayer', () => {
+    it('should add tile-based COG layer with TiTiler URL', async () => {
+      const { addTileCogLayer } = await import('../src/lib/layers/raster');
 
-      const layerId = addCogLayer(mockMap as any, 'https://example.com/raster.tif', {
+      const layerId = addTileCogLayer(mockMap as any, 'https://example.com/raster.tif', {
         tileServerUrl: 'https://titiler.example.com',
         opacity: 0.9,
       });
