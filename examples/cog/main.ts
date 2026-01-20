@@ -126,7 +126,7 @@ addCogBtn.addEventListener('click', async () => {
   setStatus('Loading COG layer...', 'loading');
 
   try {
-    const layerId = await map.addGpuCogLayer(url, {
+    const layerId = await map.addCogLayer(url, {
       opacity: parseInt(opacitySlider.value) / 100,
       fitBounds: fitBoundsCheckbox.checked,
       debug: false,
@@ -142,7 +142,6 @@ addCogBtn.addEventListener('click', async () => {
 
     updateLayerList();
     setStatus(`COG layer loaded: ${layerId}`, 'success');
-    console.log('GPU COG layer added:', layerId);
   } catch (error) {
     console.error('Error loading COG:', error);
     setStatus(`Error: ${error instanceof Error ? error.message : 'Failed to load COG'}`, 'error');
@@ -169,5 +168,4 @@ map.on('load', () => {
 
   updateLayerList();
   setStatus('Ready to load COG layer');
-  console.log('Map loaded with GPU COG layer support');
 });

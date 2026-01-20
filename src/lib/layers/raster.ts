@@ -52,17 +52,18 @@ export function addRaster(
 }
 
 /**
- * Add a Cloud Optimized GeoTIFF (COG) layer to the map.
+ * Add a Cloud Optimized GeoTIFF (COG) layer to the map using tile-based rendering.
  *
  * This method supports COGs through TiTiler or similar tile servers.
  * For native COG protocol support, the maplibre-cog-protocol package is required.
+ * For GPU-accelerated COG rendering, use addCogLayer() instead.
  *
  * @param map - MapLibre map instance
  * @param url - URL to the COG file
  * @param options - Layer options
  * @returns The layer ID
  */
-export function addCogLayer(
+export function addTileCogLayer(
   map: Map,
   url: string,
   options: AddCogOptions = {}

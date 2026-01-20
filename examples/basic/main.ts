@@ -3,6 +3,8 @@
 import maplibregl from 'maplibre-gl';
 import '../../src/index'; // Import to extend Map.prototype
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { LayerControl } from 'maplibre-gl-layer-control';
+import 'maplibre-gl-layer-control/style.css';
 import type { BasemapName } from '../../src/lib/basemaps/types';
 
 // Sample GeoJSON data
@@ -109,7 +111,6 @@ basemapSelect.addEventListener('change', () => {
   const value = basemapSelect.value as BasemapName;
   if (value) {
     map.setBasemap(value);
-    console.log(`Basemap changed to: ${value}`);
   }
 });
 
@@ -123,7 +124,6 @@ addGeojsonBtn.addEventListener('click', async () => {
     fitBounds: true,
   });
   updateLayerList();
-  console.log('GeoJSON layer added');
 });
 
 // Handle add WMS button
@@ -134,7 +134,6 @@ addWmsBtn.addEventListener('click', () => {
     opacity: 0.7,
   });
   updateLayerList();
-  console.log('WMS layer added');
 });
 
 // Initialize when map loads
@@ -143,6 +142,12 @@ map.on('load', () => {
   map.setBasemap('CartoDB.Positron');
   basemapSelect.value = 'CartoDB.Positron';
 
+  // Add layer control
+  const layerControl = new LayerControl({
+    collapsed: false,
+    panelWidth: 300,
+  });
+  map.addControl(layerControl as unknown as maplibregl.IControl, 'top-left');
+
   updateLayerList();
-  console.log('Map loaded with MapLibre GL Extend');
 });

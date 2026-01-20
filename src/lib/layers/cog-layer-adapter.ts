@@ -12,6 +12,7 @@ interface DeckLayerEntry {
   layer: Layer;
   visible: boolean;
   opacity: number;
+  name?: string;
 }
 
 /**
@@ -69,9 +70,15 @@ export class COGLayerAdapter implements CustomLayerAdapter {
    * Get the display name for a COG layer.
    */
   getName(layerId: string): string {
-    // Convert layer ID to a friendly name
+    // Get the stored name from the layer entry
+    const layers = getDeckLayers(this.map);
+    const entry = layers[layerId] as DeckLayerEntry | undefined;
+    if (entry?.name) {
+      return entry.name;
+    }
+    // Fallback: convert layer ID to a friendly name
     return layerId
-      .replace(/^(mgl-extend-)?gpu-cog[-_]?/i, '')
+      .replace(/^(mgl-extend-)?cog[-_]?/i, '')
       .replace(/[-_]/g, ' ')
       .replace(/\b\w/g, c => c.toUpperCase()) || 'COG Layer';
   }

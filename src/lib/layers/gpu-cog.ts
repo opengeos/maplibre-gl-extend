@@ -5,10 +5,34 @@ import { COGLayerWithOpacity } from './cog-layer-with-opacity';
 import { addDeckLayer, setDeckLayerVisibility, setDeckLayerOpacity, removeDeckLayer } from './deck-overlay';
 import { storeLayerInfo, removeLayerInfo, updateLayerVisibility, updateLayerOpacity } from './registry';
 import { generateLayerId } from '../utils';
-import type { AddGpuCogOptions } from './types';
+import type { AddCogLayerOptions } from './types';
 
 // Type for GeoKeys from GeoTIFF
 type GeoKeysType = Record<string, unknown>;
+
+/**
+ * Extract a display name from a URL.
+ * Returns the filename without extension, formatted nicely.
+ *
+ * @param url - URL to extract name from
+ * @returns Display name
+ */
+function extractNameFromUrl(url: string): string {
+  try {
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname;
+    // Get the filename from the path
+    const filename = pathname.split('/').pop() || 'COG Layer';
+    // Remove extension and clean up
+    const name = filename
+      .replace(/\.(tif|tiff|cog)$/i, '')
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+    return name || 'COG Layer';
+  } catch {
+    return 'COG Layer';
+  }
+}
 
 /**
  * Parse GeoKeys from a GeoTIFF for projection handling.
@@ -38,13 +62,14 @@ async function geoKeysParser(
  * @param options - Layer options
  * @returns Promise resolving to the layer ID
  */
-export async function addGpuCogLayer(
+export async function addCogLayer(
   map: Map,
   url: string,
-  options: AddGpuCogOptions = {}
+  options: AddCogLayerOptions = {}
 ): Promise<string> {
   const {
-    layerId = generateLayerId('gpu-cog'),
+    layerId = generateLayerId('cog'),
+    name = extractNameFromUrl(url),
     opacity = 1,
     visible = true,
     debug = false,
@@ -86,11 +111,12 @@ export async function addGpuCogLayer(
       });
 
       // Add the layer to deck.gl overlay
-      addDeckLayer(map, layerId, layer, visible, opacity);
+      addDeckLayer(map, layerId, layer, visible, opacity, name);
 
       // Store in our layer registry for tracking
-      storeLayerInfo(map, layerId, layerId, 'gpu-cog', {
+      storeLayerInfo(map, layerId, layerId, 'cog', {
         url,
+        name,
         opacity,
         visible,
         debug,
@@ -107,36 +133,36 @@ export async function addGpuCogLayer(
 }
 
 /**
- * Set the visibility of a GPU COG layer.
+ * Set the visibility of a COG layer.
  *
  * @param map - MapLibre map instance
  * @param layerId - Layer ID
  * @param visible - Whether the layer should be visible
  */
-export function setGpuCogLayerVisibility(map: Map, layerId: string, visible: boolean): void {
+export function setCogLayerVisibility(map: Map, layerId: string, visible: boolean): void {
   setDeckLayerVisibility(map, layerId, visible);
   updateLayerVisibility(map, layerId, visible);
 }
 
 /**
- * Set the opacity of a GPU COG layer.
+ * Set the opacity of a COG layer.
  *
  * @param map - MapLibre map instance
  * @param layerId - Layer ID
  * @param opacity - Opacity value (0-1)
  */
-export function setGpuCogLayerOpacity(map: Map, layerId: string, opacity: number): void {
+export function setCogLayerOpacity(map: Map, layerId: string, opacity: number): void {
   setDeckLayerOpacity(map, layerId, opacity);
   updateLayerOpacity(map, layerId, opacity);
 }
 
 /**
- * Remove a GPU COG layer from the map.
+ * Remove a COG layer from the map.
  *
  * @param map - MapLibre map instance
  * @param layerId - Layer ID to remove
  */
-export function removeGpuCogLayer(map: Map, layerId: string): void {
+export function removeCogLayer(map: Map, layerId: string): void {
   removeDeckLayer(map, layerId);
   removeLayerInfo(map, layerId);
 }

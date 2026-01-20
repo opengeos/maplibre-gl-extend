@@ -13,7 +13,7 @@ import {
   addGeojson,
   addVector,
   addRaster,
-  addCogLayer,
+  addTileCogLayer,
   addWmsLayer,
   removeLayerById,
   getLayerInfo,
@@ -23,7 +23,7 @@ import {
   bringLayerToFront,
   sendLayerToBack,
   fitToLayer,
-  addGpuCogLayer,
+  addCogLayer,
   addZarrLayer,
   setZarrSelector,
   setZarrClim,
@@ -72,8 +72,8 @@ function extendMapPrototype(): void {
     return addRaster(this, url, options);
   };
 
-  Map.prototype.addCogLayer = function (url, options) {
-    return addCogLayer(this, url, options);
+  Map.prototype.addTileCogLayer = function (url, options) {
+    return addTileCogLayer(this, url, options);
   };
 
   Map.prototype.addWmsLayer = function (baseUrl, options) {
@@ -135,9 +135,9 @@ function extendMapPrototype(): void {
     return getAllTrackedControls(this);
   };
 
-  // GPU COG layer methods
-  Map.prototype.addGpuCogLayer = function (url, options) {
-    return addGpuCogLayer(this, url, options);
+  // COG layer methods
+  Map.prototype.addCogLayer = function (url, options) {
+    return addCogLayer(this, url, options);
   };
 
   // Zarr layer methods
@@ -181,7 +181,7 @@ export type {
   AddCogOptions,
   AddWmsOptions,
   AddVectorOptions,
-  AddGpuCogOptions,
+  AddCogLayerOptions,
   AddZarrOptions,
   LayerInfo,
 } from './lib/layers/types';

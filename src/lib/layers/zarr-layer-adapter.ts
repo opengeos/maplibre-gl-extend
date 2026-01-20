@@ -5,6 +5,7 @@
 import type { CustomLayerAdapter, LayerState } from 'maplibre-gl-layer-control';
 import type { Map as MapLibreMap } from 'maplibre-gl';
 import type { ZarrLayer } from '@carbonplan/zarr-layer';
+import { getZarrLayerName } from './zarr';
 
 /**
  * Extended ZarrLayer type with internal properties for tracking.
@@ -107,7 +108,12 @@ export class ZarrLayerAdapter implements CustomLayerAdapter {
    * Get the display name for a Zarr layer.
    */
   getName(layerId: string): string {
-    // Convert layer ID to a friendly name
+    // Get the stored name from the layer entry
+    const name = getZarrLayerName(this.map, layerId);
+    if (name) {
+      return name;
+    }
+    // Fallback: convert layer ID to a friendly name
     return layerId
       .replace(/^(mgl-extend-)?zarr[-_]?/i, '')
       .replace(/[-_]/g, ' ')

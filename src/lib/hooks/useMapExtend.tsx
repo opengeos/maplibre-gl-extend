@@ -15,7 +15,7 @@ import type {
   AddCogOptions,
   AddWmsOptions,
   AddRasterOptions,
-  AddGpuCogOptions,
+  AddCogLayerOptions,
   AddZarrOptions,
 } from '../layers/types';
 
@@ -35,12 +35,12 @@ interface MapExtendContextValue {
   addGeojsonLayer: (data: GeoJSON | string, options?: AddGeojsonOptions) => Promise<string | null>;
   /** Add a raster layer */
   addRasterLayer: (url: string, options?: AddRasterOptions) => string | null;
-  /** Add a COG layer */
-  addCogLayer: (url: string, options?: AddCogOptions) => string | null;
+  /** Add a tile-based COG layer */
+  addTileCogLayer: (url: string, options?: AddCogOptions) => string | null;
   /** Add a WMS layer */
   addWmsLayer: (url: string, options: AddWmsOptions) => string | null;
   /** Add a GPU-accelerated COG layer */
-  addGpuCogLayer: (url: string, options?: AddGpuCogOptions) => Promise<string | null>;
+  addCogLayer: (url: string, options?: AddCogLayerOptions) => Promise<string | null>;
   /** Add a Zarr layer */
   addZarrLayer: (url: string, options: AddZarrOptions) => Promise<string | null>;
   /** Update Zarr layer selector */
@@ -148,11 +148,11 @@ export function MapExtendProvider({ map, children }: MapExtendProviderProps) {
     [map, refreshLayers]
   );
 
-  const addCogLayer = useCallback(
+  const addTileCogLayer = useCallback(
     (url: string, options?: AddCogOptions): string | null => {
       if (!map) return null;
 
-      const layerId = map.addCogLayer(url, options);
+      const layerId = map.addTileCogLayer(url, options);
       refreshLayers();
       return layerId;
     },
@@ -170,11 +170,11 @@ export function MapExtendProvider({ map, children }: MapExtendProviderProps) {
     [map, refreshLayers]
   );
 
-  const addGpuCogLayerFn = useCallback(
-    async (url: string, options?: AddGpuCogOptions): Promise<string | null> => {
+  const addCogLayerFn = useCallback(
+    async (url: string, options?: AddCogLayerOptions): Promise<string | null> => {
       if (!map) return null;
 
-      const layerId = await map.addGpuCogLayer(url, options);
+      const layerId = await map.addCogLayer(url, options);
       refreshLayers();
       return layerId;
     },
@@ -264,9 +264,9 @@ export function MapExtendProvider({ map, children }: MapExtendProviderProps) {
         setBasemap,
         addGeojsonLayer,
         addRasterLayer,
-        addCogLayer,
+        addTileCogLayer,
         addWmsLayer,
-        addGpuCogLayer: addGpuCogLayerFn,
+        addCogLayer: addCogLayerFn,
         addZarrLayer: addZarrLayerFn,
         setZarrSelector: setZarrSelectorFn,
         setZarrClim: setZarrClimFn,

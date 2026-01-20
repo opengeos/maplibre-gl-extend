@@ -19,6 +19,7 @@ interface ZarrLayerEntry {
   id: string;
   layer: ZarrLayerInstance;
   url: string;
+  name: string;
   options: AddZarrOptions;
 }
 
@@ -53,6 +54,39 @@ function setZarrLayers(map: Map, layers: Record<string, ZarrLayerEntry>): void {
  * @param options - Zarr layer options
  * @returns Promise resolving to the layer ID
  */
+/**
+ * Extract a display name from a Zarr URL and variable.
+ *
+ * @param url - URL to extract name from
+ * @param variable - Variable name
+ * @returns Display name
+ */
+function extractZarrName(url: string, variable: string): string {
+  try {
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname;
+    // Get the last part of the path as dataset name
+    const pathParts = pathname.split('/').filter(Boolean);
+    const datasetName = pathParts[pathParts.length - 1] || '';
+
+    // Format the name nicely
+    const cleanDataset = datasetName
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+
+    const cleanVariable = variable
+      .replace(/[-_]/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
+
+    if (cleanDataset && cleanVariable) {
+      return `${cleanDataset} (${cleanVariable})`;
+    }
+    return cleanVariable || cleanDataset || 'Zarr Layer';
+  } catch {
+    return variable || 'Zarr Layer';
+  }
+}
+
 export async function addZarrLayer(
   map: Map,
   url: string,
@@ -72,6 +106,9 @@ export async function addZarrLayer(
     zarrVersion = 2,
     bounds,
   } = options;
+
+  // Generate name from URL and variable if not provided
+  const name = options.name || extractZarrName(url, variable);
 
   return new Promise((resolve, reject) => {
     try {
@@ -101,8 +138,10 @@ export async function addZarrLayer(
         id: layerId,
         layer,
         url,
+        name,
         options: {
           layerId,
+          name,
           variable,
           colormap,
           clim,
@@ -121,6 +160,7 @@ export async function addZarrLayer(
       // Store in our standard layer registry for tracking
       storeLayerInfo(map, layerId, layerId, 'zarr', {
         url,
+        name,
         variable,
         colormap,
         clim,
@@ -410,4 +450,17 @@ export function getZarrLayersMap(map: Map): globalThis.Map<string, ZarrLayerInst
     layersMap.set(id, entry.layer);
   }
   return layersMap;
+}
+
+/**
+ * Get the display name for a Zarr layer.
+ *
+ * @param map - MapLibre map instance
+ * @param layerId - Layer ID
+ * @returns Display name or undefined if not found
+ */
+export function getZarrLayerName(map: Map, layerId: string): string | undefined {
+  const zarrLayers = getZarrLayers(map);
+  const entry = zarrLayers[layerId];
+  return entry?.name;
 }

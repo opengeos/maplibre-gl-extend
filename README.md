@@ -208,13 +208,13 @@ map.addCogLayer('https://example.com/raster.tif', {
 });
 ```
 
-### GPU COG Layers
+### COG Layers (GPU-accelerated)
 
 For large Cloud Optimized GeoTIFFs, use GPU-accelerated rendering with deck.gl:
 
 ```typescript
-// Add GPU-accelerated COG layer
-const layerId = await map.addGpuCogLayer('https://example.com/large-raster.tif', {
+// Add COG layer (GPU-accelerated)
+const layerId = await map.addCogLayer('https://example.com/large-raster.tif', {
   opacity: 0.8,
   fitBounds: true,      // Automatically zoom to raster extent
   debug: false,         // Show debug tiles
@@ -408,9 +408,9 @@ const {
   setBasemap,
   addGeojsonLayer,
   addRasterLayer,
-  addCogLayer,
+  addTileCogLayer,
   addWmsLayer,
-  addGpuCogLayer,    // GPU-accelerated COG layers
+  addCogLayer,       // GPU-accelerated COG layers
   addZarrLayer,      // Zarr multi-dimensional data
   setZarrSelector,   // Update Zarr dimension selector
   setZarrClim,       // Update Zarr color limits
@@ -462,7 +462,7 @@ import type {
   AddRasterOptions,
   AddCogOptions,
   AddWmsOptions,
-  AddGpuCogOptions,
+  AddCogLayerOptions,
   AddZarrOptions,
   LayerInfo,
   // State types

@@ -157,9 +157,11 @@ export interface LayerInfo {
 /**
  * Options for adding GPU-accelerated COG layers.
  */
-export interface AddGpuCogOptions {
+export interface AddCogLayerOptions {
   /** Custom layer ID (auto-generated if not provided) */
   layerId?: string;
+  /** Display name for the layer (auto-generated from URL if not provided) */
+  name?: string;
   /** Layer opacity (0-1, default: 1) */
   opacity?: number;
   /** Whether layer should be visible (default: true) */
@@ -182,6 +184,8 @@ export interface AddGpuCogOptions {
 export interface AddZarrOptions {
   /** Custom layer ID (auto-generated if not provided) */
   layerId?: string;
+  /** Display name for the layer (auto-generated from URL/variable if not provided) */
+  name?: string;
   /** Variable name to display from the Zarr dataset */
   variable: string;
   /** Colormap as array of color strings (default: viridis-like) */

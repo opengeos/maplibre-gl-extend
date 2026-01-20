@@ -7,7 +7,7 @@ import type {
   AddCogOptions,
   AddWmsOptions,
   AddVectorOptions,
-  AddGpuCogOptions,
+  AddCogLayerOptions,
   AddZarrOptions,
   LayerInfo,
 } from './lib/layers/types';
@@ -72,13 +72,14 @@ declare module 'maplibre-gl' {
     addRaster(url: string, options?: AddRasterOptions): string;
 
     /**
-     * Add a Cloud Optimized GeoTIFF (COG) layer to the map.
+     * Add a Cloud Optimized GeoTIFF (COG) layer using tile-based rendering.
+     * For GPU-accelerated rendering, use addCogLayer() instead.
      *
      * @param url - URL to the COG file
      * @param options - Layer options
      * @returns The layer ID
      */
-    addCogLayer(url: string, options?: AddCogOptions): string;
+    addTileCogLayer(url: string, options?: AddCogOptions): string;
 
     /**
      * Add a WMS layer to the map.
@@ -205,7 +206,7 @@ declare module 'maplibre-gl' {
      */
     getTrackedControls(): ControlInfo[];
 
-    // GPU COG Layer methods
+    // COG Layer methods
 
     /**
      * Add a GPU-accelerated Cloud Optimized GeoTIFF (COG) layer using deck.gl.
@@ -215,7 +216,7 @@ declare module 'maplibre-gl' {
      * @param options - Layer options
      * @returns Promise resolving to the layer ID
      */
-    addGpuCogLayer(url: string, options?: AddGpuCogOptions): Promise<string>;
+    addCogLayer(url: string, options?: AddCogLayerOptions): Promise<string>;
 
     // Zarr Layer methods
 

@@ -10,6 +10,7 @@ interface DeckLayerEntry {
   layer: Layer;
   visible: boolean;
   opacity: number;
+  name?: string;
 }
 
 /**
@@ -76,13 +77,15 @@ export function getDeckOverlay(map: Map): MapboxOverlay | undefined {
  * @param layer - Deck.gl layer instance
  * @param visible - Whether the layer should be visible
  * @param opacity - Layer opacity (0-1)
+ * @param name - Display name for the layer
  */
 export function addDeckLayer(
   map: Map,
   layerId: string,
   layer: Layer,
   visible: boolean = true,
-  opacity: number = 1
+  opacity: number = 1,
+  name?: string
 ): void {
   // Ensure overlay is created
   getOrCreateDeckOverlay(map);
@@ -94,6 +97,7 @@ export function addDeckLayer(
     layer,
     visible,
     opacity,
+    name,
   };
   setDeckLayers(map, layers);
 

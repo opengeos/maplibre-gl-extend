@@ -232,7 +232,6 @@ addZarrBtn.addEventListener('click', async () => {
 
     updateLayerList();
     setStatus(`Zarr layer loaded: ${layerId}`, 'success');
-    console.log('Zarr layer added:', layerId);
   } catch (error) {
     console.error('Error loading Zarr:', error);
     setStatus(`Error: ${error instanceof Error ? error.message : 'Failed to load Zarr'}`, 'error');
@@ -262,5 +261,4 @@ map.on('load', () => {
 
   updateLayerList();
   setStatus('Ready to load Zarr layer');
-  console.log('Map loaded with Zarr layer support');
 });
