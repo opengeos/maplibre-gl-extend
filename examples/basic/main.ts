@@ -1,8 +1,11 @@
 /// <reference path="../../src/types.d.ts" />
 
 import maplibregl from 'maplibre-gl';
-import '../../src/index'; // Import to extend Map.prototype
+import { extendMapPrototype } from '../../src/index';
 import 'maplibre-gl/dist/maplibre-gl.css';
+
+// Explicitly extend Map.prototype to ensure it's not tree-shaken in production builds
+extendMapPrototype();
 import { LayerControl } from 'maplibre-gl-layer-control';
 import 'maplibre-gl-layer-control/style.css';
 import type { BasemapName } from '../../src/lib/basemaps/types';

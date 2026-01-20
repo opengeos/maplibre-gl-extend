@@ -4,8 +4,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import maplibregl, { Map } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { MapExtendProvider, useMapExtend } from '../../src/react';
+import { MapExtendProvider, useMapExtend, extendMapPrototype } from '../../src/react';
 import type { BasemapName } from '../../src/lib/basemaps/types';
+
+// Explicitly extend Map.prototype to ensure it's not tree-shaken in production builds
+extendMapPrototype();
 
 // Sample GeoJSON data
 const sampleGeojson = {
